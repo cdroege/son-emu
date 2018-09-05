@@ -60,7 +60,7 @@ RUN python setup.py develop
 
 # Important: This entrypoint is required to start the OVS service
 ENTRYPOINT ["/son-emu/utils/docker/entrypoint.sh"]
-CMD ["python", "examples/default_single_dc_topology.py"]
+CMD ["python", "examples/nfv-topology.py"]
 
 # open ports for emulator APIs
 # SONATA GK
