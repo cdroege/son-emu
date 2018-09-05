@@ -33,6 +33,7 @@ import threading
 from docker import DockerClient
 from flask import Flask, request
 import flask_restful as fr
+from gevent.pywsgi import WSGIServer
 from collections import defaultdict
 import pkg_resources
 from subprocess import Popen
@@ -1166,12 +1167,12 @@ api.add_resource(Exit, '/emulator/exit')
 def start_rest_api(host, port, datacenters=dict()):
     GK.dcs = datacenters
     GK.net = get_dc_network()
-    # start the Flask server (not the best performance but ok for our use case)
-    app.run(host=host,
-            port=port,
-            debug=True,
-            use_reloader=False  # this is needed to run Flask in a non-main thread
-            )
+    http_server = WSGIServer(
+            (host, port),
+            app,
+            log=open("/dev/null", "w")  # don't show http logs
+        )
+    http_server.serve_forever(stop_timeout=1.0)
 
 
 def ensure_dir(name):
